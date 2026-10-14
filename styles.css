@@ -230,6 +230,77 @@ a {
   margin-bottom: 2rem;
 }
 
+.concept-section {
+  margin-top: 3.5rem;
+}
+
+.section-heading {
+  max-width: 680px;
+  margin-bottom: 1.35rem;
+}
+
+.section-heading h2 {
+  margin-bottom: 0.65rem;
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+}
+
+.section-heading > p:last-child {
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.loop-grid,
+.concept-grid {
+  display: grid;
+  gap: 0.85rem;
+  list-style: none;
+}
+
+.loop-grid {
+  grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+}
+
+.concept-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.loop-step,
+.concept-card {
+  min-width: 0;
+  padding: 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.85rem;
+  background: var(--surface);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.step-number,
+.concept-index {
+  display: block;
+  margin-bottom: 1rem;
+  color: var(--blue);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.loop-step h3,
+.concept-card h3 {
+  margin-bottom: 0.45rem;
+  font-size: 1rem;
+}
+
+.loop-step p,
+.concept-card p {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.concept-card .concept-index {
+  color: var(--purple);
+}
+
 .page-hero h1 {
   font-size: clamp(2.5rem, 7vw, 4.8rem);
 }
@@ -346,6 +417,14 @@ a {
 
   .reference-card {
     align-items: flex-start;
+  }
+
+  .concept-section {
+    margin-top: 2.75rem;
+  }
+
+  .concept-grid {
+    grid-template-columns: 1fr;
   }
 }
 

@@ -17,8 +17,73 @@
       <section class="page-hero">
         <p class="eyebrow">01 / IDE</p>
         <h1>GH Copilot <span class="gradient-text">in VS Code</span></h1>
-        <p class="page-copy">Explore how AI assistance and agent workflows operate inside VS Code, including the concepts that shape editor-native Copilot experiences.</p>
+        <p class="page-copy">An AI agent works toward a goal by gathering context, using tools in your development environment, and evaluating what happened. In VS Code, you guide the work and decide which actions need approval.</p>
       </section>
+
+      <section class="concept-section" aria-labelledby="agent-loop-title">
+        <div class="section-heading">
+          <p class="eyebrow">From request to result</p>
+          <h2 id="agent-loop-title">The agent loop</h2>
+          <p>Each action gives the agent new information, so it can adjust and continue until the task is ready for your review.</p>
+        </div>
+        <ol class="loop-grid">
+          <li class="loop-step">
+            <span class="step-number">01</span>
+            <h3>Set a goal</h3>
+            <p>Describe the outcome and any constraints.</p>
+          </li>
+          <li class="loop-step">
+            <span class="step-number">02</span>
+            <h3>Gather context</h3>
+            <p>Relevant files and conversation history inform the model.</p>
+          </li>
+          <li class="loop-step">
+            <span class="step-number">03</span>
+            <h3>Take action</h3>
+            <p>Tools let the agent inspect files, edit code, or run commands.</p>
+          </li>
+          <li class="loop-step">
+            <span class="step-number">04</span>
+            <h3>Evaluate</h3>
+            <p>Results become context for the next decision or validation.</p>
+          </li>
+          <li class="loop-step">
+            <span class="step-number">05</span>
+            <h3>Review</h3>
+            <p>Inspect the changes and validation results before keeping them.</p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="concept-section" aria-labelledby="working-title">
+        <div class="section-heading">
+          <p class="eyebrow">The pieces around the loop</p>
+          <h2 id="working-title">Work with agents on your terms</h2>
+        </div>
+        <div class="concept-grid">
+          <article class="concept-card">
+            <span class="concept-index">01 / SESSION</span>
+            <h3>Keep work together</h3>
+            <p>A session brings the conversation, task state, workspace, and code changes together. You can continue the work across supported agent experiences.</p>
+          </article>
+          <article class="concept-card">
+            <span class="concept-index">02 / ENVIRONMENT</span>
+            <h3>Choose where work runs</h3>
+            <p>An agent harness coordinates the model, tools, and session. Its execution environment can be your machine, a connected host, a Dev Container, or cloud infrastructure.</p>
+          </article>
+          <article class="concept-card">
+            <span class="concept-index">03 / CONTROL</span>
+            <h3>Stay in control</h3>
+            <p>Choose available tools and approval requirements. Add context, redirect or stop the agent, then review its changes and validation results.</p>
+          </article>
+          <article class="concept-card">
+            <span class="concept-index">04 / CAPABILITIES</span>
+            <h3>Extend agent work</h3>
+            <p>Use planning for complex tasks, delegate focused research to subagents, and tailor workflows with memory, custom agents, skills, and hooks.</p>
+          </article>
+        </div>
+      </section>
+
       <div class="reference-grid">
         <a class="reference-card" href="https://code.visualstudio.com/docs/agents/concepts/overview" target="_blank" rel="noopener noreferrer">
           <span><span class="reference-label">Official reference</span><span class="reference-title">How AI works in VS Code</span></span>
