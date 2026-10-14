@@ -3,25 +3,83 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to GH Copilot</title>
-  <style>
-    body {
-      font-family: serif;
-      padding: 1rem;
-    }
-  </style>
+  <meta name="description" content="Explore GitHub Copilot across IDE, Web UI, CLI, SDK, and App experiences." />
+  <title>Explore GitHub Copilot</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <main>
-    <h1>Welcome to the World of GH Copilot</h1>
-    <p>Explore GitHub Copilot across multiple modes — IDE, Web UI, CLI, SDK, and App.</p>
-    <nav>
-      <a href="gh-copilot-vscode.html">GH Copilot in VS Code</a>
-      <a href="gh-copilot-web-ui.html">GH Copilot in Web UI</a>
-      <a href="gh-copilot-cli.html">GH Copilot CLI</a>
-      <a href="gh-copilot-sdk.html">GH Copilot SDK</a>
-      <a href="gh-copilot-app.html">GH Copilot App</a>
-    </nav>
-  </main>
+  <div class="site-shell">
+    <header class="site-header">
+      <a class="brand" href="index.html" aria-label="GitHub Copilot home">
+        <span class="brand-mark" aria-hidden="true">GH</span>
+        <span>Copilot modes</span>
+      </a>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="page-title">
+        <p class="eyebrow">One AI partner, many workflows</p>
+        <h1 id="page-title">Explore GitHub Copilot <span class="gradient-text">across multiple modes</span></h1>
+        <p class="hero-copy">Explore GitHub Copilot across multiple modes - IDE, Web UI, CLI, SDK, and App. Choose an experience to see how Copilot supports each part of the development journey.</p>
+      </section>
+
+      <nav aria-label="GitHub Copilot experiences">
+        <ul class="mode-grid">
+          <li class="mode-card" style="--accent: #60a5fa">
+            <a class="mode-link" href="gh-copilot-vscode.html">
+              <span class="mode-number">01 / IDE</span>
+              <span class="mode-content">
+                <h2>GH Copilot in VS Code</h2>
+                <p>Bring AI assistance and agent workflows directly into your editor.</p>
+                <span class="mode-action">Explore VS Code <span class="mode-arrow" aria-hidden="true">&rarr;</span></span>
+              </span>
+            </a>
+          </li>
+          <li class="mode-card" style="--accent: #a78bfa">
+            <a class="mode-link" href="gh-copilot-web-ui.html">
+              <span class="mode-number">02 / WEB</span>
+              <span class="mode-content">
+                <h2>GH Copilot in Web UI</h2>
+                <p>Delegate work to cloud agents and accelerate pull request reviews.</p>
+                <span class="mode-action">Explore Web UI <span class="mode-arrow" aria-hidden="true">&rarr;</span></span>
+              </span>
+            </a>
+          </li>
+          <li class="mode-card" style="--accent: #34d399">
+            <a class="mode-link" href="gh-copilot-cli.html">
+              <span class="mode-number">03 / TERMINAL</span>
+              <span class="mode-content">
+                <h2>GH Copilot CLI</h2>
+                <p>Plan, build, and troubleshoot without leaving your terminal.</p>
+                <span class="mode-action">Explore CLI <span class="mode-arrow" aria-hidden="true">&rarr;</span></span>
+              </span>
+            </a>
+          </li>
+          <li class="mode-card" style="--accent: #f59e0b">
+            <a class="mode-link" href="gh-copilot-sdk.html">
+              <span class="mode-number">04 / EXTEND</span>
+              <span class="mode-content">
+                <h2>GH Copilot SDK</h2>
+                <p>Embed agentic Copilot capabilities into apps and services.</p>
+                <span class="mode-action">Explore SDK <span class="mode-arrow" aria-hidden="true">&rarr;</span></span>
+              </span>
+            </a>
+          </li>
+          <li class="mode-card" style="--accent: #f472b6">
+            <a class="mode-link" href="gh-copilot-app.html">
+              <span class="mode-number">05 / APP</span>
+              <span class="mode-content">
+                <h2>GH Copilot App</h2>
+                <p>Follow the official app's releases, issues, and evolution.</p>
+                <span class="mode-action">Explore App <span class="mode-arrow" aria-hidden="true">&rarr;</span></span>
+              </span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </main>
+
+    <footer class="site-footer">A hands-on tour of GitHub Copilot across the developer workflow.</footer>
+  </div>
 </body>
 </html>
