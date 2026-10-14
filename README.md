@@ -1,14 +1,3 @@
-<!-- TEMPLATE_README_START -->
-> [!NOTE]
-> **This repository is a template.** Click the button below to create your own copy and run the demo yourself.
-> The template explanation you're reading now will be **automatically removed** from your new repository.
-
-<a href="https://github.com/mburakunuvar/gh-copilot-JUNE26-LIVE-DEMO-DONT-DELETE/generate">
-  <img src="https://img.shields.io/badge/%F0%9F%9A%80-Use%20This%20Template-2ea44f?style=for-the-badge" alt="Use This Template">
-</a>
-
----
-<!-- TEMPLATE_README_END -->
 
 # GitHub Copilot Across Multiple Modes
 
