@@ -130,7 +130,7 @@ Invoke-WebRequest -Uri "https://$fqdn" -Method Head
 
 **Repository variables:** `ACR_LOGIN_SERVER`, `AZURE_RESOURCE_GROUP`, `AZURE_CONTAINERAPP_NAME`.
 
-The federated credential subject must exactly match `repo:[GITHUB_OWNER]/[GITHUB_REPO]:ref:refs/heads/[GITHUB_BRANCH]`. Do not add `AZURE_CLIENT_SECRET`, `ACR_USERNAME`, or `ACR_PASSWORD`; ACR admin access remains disabled.
+The federated credential subject must exactly match the `sub` claim GitHub emits. Standard accounts use `repo:[GITHUB_OWNER]/[GITHUB_REPO]:ref:refs/heads/[GITHUB_BRANCH]`; Enterprise Managed User repositories may emit immutable owner/repository IDs such as `repo:<owner>@<id>/<repo>@<id>:ref:refs/heads/<branch>`. If Azure reports `AADSTS700213`, use the assertion subject from that error to create the matching federated credential. Do not add `AZURE_CLIENT_SECRET`, `ACR_USERNAME`, or `ACR_PASSWORD`; ACR admin access remains disabled.
 
 ## Completion Evidence (Paste Into Issue #1 Comment)
 

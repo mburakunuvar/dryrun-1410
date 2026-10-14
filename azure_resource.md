@@ -1,16 +1,19 @@
 # Azure Resource Details
 
-> Update this file manually during the **Azure Container Apps Setup** issue (Issue #1).
-> Fill in the actual values after a successful deployment so the team can reference them.
+> Provisioned for **Azure Container Apps Setup** (Issue #1) on 2026-10-14.
 
 | Property | Value |
 |---|---|
-| **Subscription** | _TBD_ |
-| **Resource Group** | _TBD_ |
-| **Container App Name** | _TBD_ |
-| **Container Apps Environment** | _TBD_ |
-| **Container Registry Name** | _TBD_ |
-| **ACR Login Server** | _TBD_ |
-| **Region** | _TBD_ |
-| **Live URL** | _TBD_ |
-| **Ingress FQDN** | _TBD_ |
+| **Subscription** | `ms-non-prod-subscription-burak` (`44fbc5bb-2b98-4d5e-a58c-e2f2e4fae5d6`) |
+| **Resource Group** | `rg-ghcp-demo` |
+| **Container App Name** | `ghcp-demo-app` |
+| **Container Apps Environment** | `ghcp-demo-env` |
+| **Container Registry Name** | `ghcpdemoregistry` |
+| **ACR Login Server** | `ghcpdemoregistry.azurecr.io` |
+| **Region** | `swedencentral` |
+| **Live URL** | https://ghcp-demo-app.redhill-e2ca4422.swedencentral.azurecontainerapps.io |
+| **Ingress FQDN** | `ghcp-demo-app.redhill-e2ca4422.swedencentral.azurecontainerapps.io` |
+| **Deployed Image** | `ghcpdemoregistry.azurecr.io/ghcp-demo-site:49bc52b` |
+| **Workflow Run** | https://github.com/mburakunuvar/dryrun-1410/actions/runs/38614645949 |
+
+GitHub Actions authenticates through OIDC without an Azure client secret. The Container App uses its system-assigned managed identity with `AcrPull`; the deployment identity has `AcrPush` on the registry and `Container Apps Contributor` on the resource group.

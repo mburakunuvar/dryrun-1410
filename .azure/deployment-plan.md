@@ -1,6 +1,6 @@
 # Azure Deployment Plan
 
-> **Status:** Validated
+> **Status:** Deployed
 
 Generated: 2026-10-14
 
@@ -21,7 +21,7 @@ Generated: 2026-10-14
 | Subscription | ms-non-prod-subscription-burak (`44fbc5bb-2b98-4d5e-a58c-e2f2e4fae5d6`) |
 | Location | Sweden Central (`swedencentral`) |
 
-**Authentication decision:** GitHub Actions will use OIDC/workload identity federation, not a client secret. The repository currently has no deployment secrets. The federated identity will be restricted to `repo:mburakunuvar/dryrun-1410:ref:refs/heads/main`.
+**Authentication decision:** GitHub Actions uses OIDC/workload identity federation, not a client secret. For this Enterprise Managed User repository, the active credential is restricted to `repo:mburakunuvar@63947536/dryrun-1410@1419524481:ref:refs/heads/main`.
 
 **Azure Policy constraints:** Three subscription assignments were inspected. They concern Defender for SQL/Open Source Relational Databases and do not constrain this Container Apps/ACR deployment. No region, naming, or tag requirement relevant to these resources was found.
 
@@ -103,13 +103,13 @@ The workflow will use GitHub secrets for `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, a
 - [x] Update the deployment workflow for GitHub OIDC and managed-identity ACR pull
 - [x] Update the setup runbook and Issue #1 template for OIDC; remove password-based registry steps
 - [x] Validate the workflow and runbook
-- [ ] Provision the resource group, Basic ACR, Container Apps environment, and app
-- [ ] Create the federated credential and scoped Azure role assignments
-- [ ] Configure GitHub repository secrets/variables without exposing credentials
-- [ ] Validate the Docker image locally if Docker is available
-- [ ] Run the `Azure Container Apps CI/CD` workflow and verify its completion
-- [ ] Verify the public URL responds successfully
-- [ ] Record actual resource IDs, registry endpoint, environment/app names, region, and URL in `azure_resource.md`
+- [x] Provision the resource group, Basic ACR, Container Apps environment, and app
+- [x] Create the federated credential and scoped Azure role assignments
+- [x] Configure GitHub repository secrets/variables without exposing credentials
+- [x] Validate the Docker image locally
+- [x] Run the `Azure Container Apps CI/CD` workflow and verify its completion
+- [x] Verify the public URL responds successfully
+- [x] Record actual resource IDs, registry endpoint, environment/app names, region, and URL in `azure_resource.md`
 
 ### Phase 3: Validation
 - [x] All validation checks pass
@@ -141,3 +141,18 @@ The workflow will use GitHub secrets for `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, a
 - **Container App system identity:** `AcrPull` scoped to the registry.
 - **Least privilege:** Registry data-plane roles are resource-scoped; the management-plane role is limited to the deployment resource group.
 - **Source reviewed:** `template-azureapp.md` provisioning commands and `.github/workflows/azure-container-apps.yml` deployment operations.
+
+## 10. Deployment Verification
+
+- **Workflow:** https://github.com/mburakunuvar/dryrun-1410/actions/runs/38614645949
+- **Image:** `ghcpdemoregistry.azurecr.io/ghcp-demo-site:49bc52b`
+- **Revision:** `ghcp-demo-app--0000001` (`Healthy`, `Provisioned`, 100% traffic to latest revision)
+- **Endpoint:** https://ghcp-demo-app.redhill-e2ca4422.swedencentral.azurecontainerapps.io
+- **HTTP verification:** `200 OK`
+
+### Live Role Verification
+
+- Container App identity `125d64b5-85bc-40ce-80f7-8d7765948853` -> `AcrPull` on `ghcpdemoregistry`
+- GitHub deployment identity `aaa0091b-a955-4ced-8079-5a7e06d47634` -> `AcrPush` on `ghcpdemoregistry`
+- GitHub deployment identity `aaa0091b-a955-4ced-8079-5a7e06d47634` -> `Container Apps Contributor` on `rg-ghcp-demo`
+- **Status:** Pass
