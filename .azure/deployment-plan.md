@@ -144,9 +144,9 @@ The workflow will use GitHub secrets for `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, a
 
 ## 10. Deployment Verification
 
-- **Workflow:** https://github.com/mburakunuvar/dryrun-1410/actions/runs/38614645949
-- **Image:** `ghcpdemoregistry.azurecr.io/ghcp-demo-site:49bc52b`
-- **Revision:** `ghcp-demo-app--0000001` (`Healthy`, `Provisioned`, 100% traffic to latest revision)
+- **Workflow:** https://github.com/mburakunuvar/dryrun-1410/actions/runs/38616930548
+- **Image:** `ghcpdemoregistry.azurecr.io/ghcp-demo-site:f792e13`
+- **Revision:** `ghcp-demo-app--0000002` (`Healthy`, `Provisioned`, latest revision)
 - **Endpoint:** https://ghcp-demo-app.redhill-e2ca4422.swedencentral.azurecontainerapps.io
 - **HTTP verification:** `200 OK`
 
