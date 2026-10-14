@@ -66,7 +66,7 @@ gh issue list --repo <owner>/<your-new-repo>
 ### Issue 1 — Azure Container Apps Setup
 **Label**: `init-demo`
 
-Create Azure Container Registry and Container Apps resources, add deployment secrets, and verify the live URL. The deployment workflow is `workflow_dispatch` only — trigger it manually after setup to deploy the container.
+Create Azure Container Registry and Container Apps resources, configure GitHub OIDC and role assignments, and verify the live URL. The deployment workflow is `workflow_dispatch` only — trigger it manually after setup to deploy the container.
 
 ---
 

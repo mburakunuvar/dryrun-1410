@@ -9,7 +9,7 @@ labels: "copilot-cli"
 Deploy the full site to Azure Container Apps and verify it is live.
 
 ## Pre-flight requirements
-1. **Azure Container Apps Setup** (Issue 1) must be completed — environment created, all deployment secrets added to the repository.
+1. **Azure Container Apps Setup** (Issue 1) must be completed — environment and app created, GitHub OIDC configured, and required repository secrets/variables set.
 2. All page issues (Issues 2–7) should be closed — Home Page, Web UI, VS Code, CLI, SDK, and App pages are committed and pushed to `main`.
 
 ## Steps
@@ -48,9 +48,9 @@ gh run view <run-id> --log | grep "Live URL"
 Then open the URL and confirm the home page and all navigation links work.
 
 ## Common failure causes
-- **Missing secrets**: Verify all secrets are set in repo settings (`AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_SUBSCRIPTION_ID`, `AZURE_CLIENT_SECRET`, `ACR_LOGIN_SERVER`, `ACR_USERNAME`, `ACR_PASSWORD`, `AZURE_RESOURCE_GROUP`, `AZURE_CONTAINERAPP_NAME`, `AZURE_CONTAINERAPPS_ENVIRONMENT`)
-- **ACR login failure**: Ensure admin access is enabled on the container registry
-- **Container App not found**: On first deploy, the workflow creates the app; on subsequent deploys, it updates it
+- **Azure login failure**: Verify `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, and `AZURE_SUBSCRIPTION_ID`, plus the GitHub OIDC federated credential's subject, issuer, and audience.
+- **ACR login failure**: Verify the GitHub principal has `AcrPush` and the app managed identity has `AcrPull`; ACR admin access should remain disabled.
+- **Container App not found**: Complete the resource and identity bootstrap in Issue #1 before running this deployment workflow.
 
 ## Assigned to
 GitHub Copilot CLI

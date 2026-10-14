@@ -45,22 +45,19 @@ jobs:
           ### Steps
           1. `az login`
           2. `az group create --name <rg-name> --location <region>`
-          3. `az acr create --name <acr-name> --resource-group <rg-name> --sku Basic`
+          3. `az acr create --name <acr-name> --resource-group <rg-name> --sku Basic --admin-enabled false`
           4. `az containerapp env create --name <env-name> --resource-group <rg-name> --location <region>`
-          5. Set these repository secrets:
+          5. Bootstrap the Container App with a public image and a system-assigned identity, grant it `AcrPull` on ACR, and configure the app to use that identity.
+          6. Create a federated credential for `repo:<owner>/<repo>:ref:refs/heads/<branch>` with issuer `https://token.actions.githubusercontent.com` and audience `api://AzureADTokenExchange`. Grant the GitHub deployment principal `Container Apps Contributor` on the resource group and `AcrPush` on the registry.
+          7. Set these repository secrets:
              - `AZURE_CLIENT_ID`
              - `AZURE_TENANT_ID`
              - `AZURE_SUBSCRIPTION_ID`
-             - `AZURE_CLIENT_SECRET`
-             - `ACR_LOGIN_SERVER` from `az acr show --name <acr-name> --resource-group <rg-name> --query loginServer -o tsv`
-             - `ACR_USERNAME` from `az acr credential show --name <acr-name> --resource-group <rg-name> --query username -o tsv`
-             - `ACR_PASSWORD` from `az acr credential show --name <acr-name> --resource-group <rg-name> --query passwords[0].value -o tsv`
-             - `AZURE_RESOURCE_GROUP` set to `<rg-name>`
-             - `AZURE_CONTAINERAPP_NAME` set to `<app-name>`
-             - `AZURE_CONTAINERAPPS_ENVIRONMENT` set to `<env-name>`
-          6. `gh workflow run "Azure Container Apps CI/CD"`
-          7. Verify the live URL: `az containerapp show --name <app-name> --resource-group <rg-name> --query "properties.configuration.ingress.fqdn" -o tsv`
-          8. Update `azure_resource.md` with the actual resource details, commit and push.
+          8. Set repository variables `ACR_LOGIN_SERVER`, `AZURE_RESOURCE_GROUP`, and `AZURE_CONTAINERAPP_NAME`.
+          9. Trigger `gh workflow run "Azure Container Apps CI/CD" --ref <branch>` from the federated branch.
+          10. Verify the live URL responds successfully and update `azure_resource.md` with actual resource details.
+
+          Use GitHub OIDC and managed identities; do not configure `AZURE_CLIENT_SECRET`, `ACR_USERNAME`, or `ACR_PASSWORD`.
           EOF
           sed -i 's/^          //' /tmp/body.md
           gh issue create --repo "$REPO" --label "init-demo" --title "Azure Container Apps Setup" --body-file /tmp/body.md
@@ -223,7 +220,7 @@ jobs:
           Deploy the full site to Azure Container Apps and verify it is live.
 
           ## Pre-flight requirements
-          1. **Azure Container Apps Setup** (Issue 1) must be completed — environment created, all deployment secrets added to the repository.
+          1. **Azure Container Apps Setup** (Issue 1) must be completed — environment and app created, GitHub OIDC configured, and required repository secrets/variables set.
           2. All page issues (Issues 2–7) should be closed — Home Page, Web UI, VS Code, CLI, SDK, and App pages are committed and pushed to `main`.
 
           ## Steps
@@ -262,9 +259,9 @@ jobs:
           Then open the URL and confirm the home page and all navigation links work.
 
           ## Common failure causes
-          - **Missing secrets**: Verify all required secrets are set in repo settings (`AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_SUBSCRIPTION_ID`, `AZURE_CLIENT_SECRET`, `ACR_LOGIN_SERVER`, `ACR_USERNAME`, `ACR_PASSWORD`, `AZURE_RESOURCE_GROUP`, `AZURE_CONTAINERAPP_NAME`, `AZURE_CONTAINERAPPS_ENVIRONMENT`)
-          - **ACR login failure**: Ensure admin access is enabled on the container registry
-          - **Container App not found**: On first deploy, the workflow creates the app; on subsequent deploys, it updates it
+          - **Azure login failure**: Verify the three Azure identity secrets and the GitHub OIDC federated credential subject, issuer, and audience.
+          - **ACR login failure**: Verify the GitHub principal has `AcrPush` and the app managed identity has `AcrPull`; keep ACR admin access disabled.
+          - **Container App not found**: Complete the resource and identity bootstrap in Issue #1 before running the deployment workflow.
 
           ## Assigned to
           GitHub Copilot CLI
