@@ -1,0 +1,35 @@
+name: Auto-deploy when all pages are ready
+
+on:
+  issues:
+    types: [closed]
+
+jobs:
+  check-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+      actions: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      REPO: ${{ github.repository }}
+    steps:
+      - name: Check if all prerequisite issues are closed
+        id: check
+        run: |
+          TITLES=("Scaffold and Beautify the Home Page" "GH Copilot in VS Code Page" "GH Copilot in Web UI Page" "GH Copilot CLI Page" "GH Copilot SDK Page" "GH Copilot App Page")
+          for TITLE in "${TITLES[@]}"; do
+            OPEN=$(gh issue list --repo "$REPO" --state open --search "$TITLE in:title" --json number --jq 'length')
+            if [ "$OPEN" -gt 0 ]; then
+              echo "ready=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          done
+          echo "ready=true" >> "$GITHUB_OUTPUT"
+
+      - name: Trigger deployment
+        if: steps.check.outputs.ready == 'true'
+        run: |
+          gh workflow run "Azure Container Apps CI/CD" --repo "$REPO"
+          echo "Deployment triggered! All prerequisite issues are closed."

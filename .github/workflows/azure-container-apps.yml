@@ -1,0 +1,100 @@
+name: Azure Container Apps CI/CD
+
+on:
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: ghcp-demo-site
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    name: Build and Deploy
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure login
+        env:
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+        run: |
+          set -euo pipefail
+          az login --service-principal \
+            --username "$AZURE_CLIENT_ID" \
+            --password "$AZURE_CLIENT_SECRET" \
+            --tenant "$AZURE_TENANT_ID"
+          az account set --subscription "$AZURE_SUBSCRIPTION_ID"
+
+      - name: Build and push image to ACR
+        env:
+          ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
+        run: |
+          set -euo pipefail
+          IMAGE_TAG="${GITHUB_SHA::7}"
+          ACR_NAME="${ACR_LOGIN_SERVER%%.*}"
+
+          az acr login --name "$ACR_NAME"
+          docker build \
+            -t "$ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG" \
+            -t "$ACR_LOGIN_SERVER/$IMAGE_NAME:latest" \
+            .
+          docker push "$ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG"
+          docker push "$ACR_LOGIN_SERVER/$IMAGE_NAME:latest"
+
+      - name: Deploy image to Azure Container Apps
+        env:
+          ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
+          ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
+          ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
+          AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
+          AZURE_CONTAINERAPP_NAME: ${{ secrets.AZURE_CONTAINERAPP_NAME }}
+          AZURE_CONTAINERAPPS_ENVIRONMENT: ${{ secrets.AZURE_CONTAINERAPPS_ENVIRONMENT }}
+        run: |
+          set -euo pipefail
+          IMAGE_TAG="${GITHUB_SHA::7}"
+          IMAGE="$ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG"
+
+          APP_EXISTS=$(az containerapp show --name "$AZURE_CONTAINERAPP_NAME" --resource-group "$AZURE_RESOURCE_GROUP" --query name -o tsv 2>/dev/null || echo "")
+          if [[ -n "$APP_EXISTS" ]]; then
+            az containerapp registry set \
+              --name "$AZURE_CONTAINERAPP_NAME" \
+              --resource-group "$AZURE_RESOURCE_GROUP" \
+              --server "$ACR_LOGIN_SERVER" \
+              --username "$ACR_USERNAME" \
+              --password "$ACR_PASSWORD"
+            az containerapp update \
+              --name "$AZURE_CONTAINERAPP_NAME" \
+              --resource-group "$AZURE_RESOURCE_GROUP" \
+              --image "$IMAGE"
+          else
+            az containerapp create \
+              --name "$AZURE_CONTAINERAPP_NAME" \
+              --resource-group "$AZURE_RESOURCE_GROUP" \
+              --environment "$AZURE_CONTAINERAPPS_ENVIRONMENT" \
+              --ingress external \
+              --target-port 80 \
+              --image "$IMAGE" \
+              --registry-server "$ACR_LOGIN_SERVER" \
+              --registry-username "$ACR_USERNAME" \
+              --registry-password "$ACR_PASSWORD" \
+              --min-replicas 1 \
+              --max-replicas 1
+          fi
+
+      - name: Show live URL
+        env:
+          AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
+          AZURE_CONTAINERAPP_NAME: ${{ secrets.AZURE_CONTAINERAPP_NAME }}
+        run: |
+          set -euo pipefail
+          FQDN=$(az containerapp show \
+            --name "$AZURE_CONTAINERAPP_NAME" \
+            --resource-group "$AZURE_RESOURCE_GROUP" \
+            --query "properties.configuration.ingress.fqdn" \
+            -o tsv)
+          echo "Live URL: https://$FQDN"

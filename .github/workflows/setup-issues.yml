@@ -1,0 +1,322 @@
+name: Setup Demo Issues
+
+on:
+  workflow_dispatch:
+
+jobs:
+  create-issues:
+    name: Create demo issues
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      REPO: ${{ github.repository }}
+
+    steps:
+      - name: Create labels
+        run: |
+          gh label create "init-demo"    --repo "$REPO" --color "D93F0B" --description "Initial demo setup tasks"         --force
+          gh label create "coding-agent" --repo "$REPO" --color "0E8A16" --description "Assigned to Cloud Agent on Github.com"  --force
+          gh label create "copilot-cli"  --repo "$REPO" --color "1D76DB" --description "Assigned to Copilot CLI"          --force
+          gh label create "agent-mode"   --repo "$REPO" --color "5319E7" --description "Assigned to Agent Mode in IDE"    --force
+          gh label create "aca-infra-auditor" --repo "$REPO" --color "B60205" --description "Assigned to ACA infra custom auditor agent" --force
+          gh label create "post-demo"    --repo "$REPO" --color "FBCA04" --description "Post-demo cleanup tasks"          --force
+
+      - name: Check if demo issues already exist
+        id: check
+        run: |
+          FOUND=$(gh issue list --repo "$REPO" --state all --search "Azure Container Apps Setup in:title" --json number --jq 'length')
+          if [ "$FOUND" -gt 0 ]; then
+            echo "Demo issues already exist. To re-create, close/delete existing demo issues first."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Issue 1 — Azure Container Apps Setup
+        if: steps.check.outputs.skip == 'false'
+        run: |
+          cat > /tmp/body.md <<'EOF'
+          ## Task
+          Deploy this repo as one container running on Azure Container Apps.
+
+          ### Steps
+          1. `az login`
+          2. `az group create --name <rg-name> --location <region>`
+          3. `az acr create --name <acr-name> --resource-group <rg-name> --sku Basic`
+          4. `az containerapp env create --name <env-name> --resource-group <rg-name> --location <region>`
+          5. Set these repository secrets:
+             - `AZURE_CLIENT_ID`
+             - `AZURE_TENANT_ID`
+             - `AZURE_SUBSCRIPTION_ID`
+             - `AZURE_CLIENT_SECRET`
+             - `ACR_LOGIN_SERVER` from `az acr show --name <acr-name> --resource-group <rg-name> --query loginServer -o tsv`
+             - `ACR_USERNAME` from `az acr credential show --name <acr-name> --resource-group <rg-name> --query username -o tsv`
+             - `ACR_PASSWORD` from `az acr credential show --name <acr-name> --resource-group <rg-name> --query passwords[0].value -o tsv`
+             - `AZURE_RESOURCE_GROUP` set to `<rg-name>`
+             - `AZURE_CONTAINERAPP_NAME` set to `<app-name>`
+             - `AZURE_CONTAINERAPPS_ENVIRONMENT` set to `<env-name>`
+          6. `gh workflow run "Azure Container Apps CI/CD"`
+          7. Verify the live URL: `az containerapp show --name <app-name> --resource-group <rg-name> --query "properties.configuration.ingress.fqdn" -o tsv`
+          8. Update `azure_resource.md` with the actual resource details, commit and push.
+          EOF
+          sed -i 's/^          //' /tmp/body.md
+          gh issue create --repo "$REPO" --label "init-demo" --title "Azure Container Apps Setup" --body-file /tmp/body.md
+
+      - name: Issue 2 — Scaffold and Beautify the Home Page
+        if: steps.check.outputs.skip == 'false'
+        run: |
+          cat > /tmp/body.md <<'EOF'
+          ## Task
+          Scaffold and beautify the existing `index.html` as an **Explore GitHub Copilot** overview page with:
+          - Title: **Explore GitHub Copilot across multiple modes**
+          - Explore GitHub Copilot across multiple modes — IDE, Web UI, CLI, SDK, and App.
+          - Five navigation buttons linking to:
+            1. **GH Copilot in VS Code** → `gh-copilot-vscode.html`
+            2. **GH Copilot in Web UI** → `gh-copilot-web-ui.html`
+            3. **GH Copilot CLI** → `gh-copilot-cli.html`
+            4. **GH Copilot SDK** → `gh-copilot-sdk.html`
+            5. **GH Copilot App** → `gh-copilot-app.html`
+
+          The topic pages (`gh-copilot-vscode.html`, `gh-copilot-web-ui.html`, `gh-copilot-cli.html`, `gh-copilot-sdk.html`, `gh-copilot-app.html`) already exist in the repo — update and beautify them to match the home page style.
+
+          ## Assigned to
+          GitHub Copilot CLI
+          EOF
+          sed -i 's/^          //' /tmp/body.md
+          gh issue create --repo "$REPO" --label "copilot-cli" --title "Scaffold and Beautify the Home Page" --body-file /tmp/body.md
+
+      - name: Issue 3 — GH Copilot in Web UI Page
+        if: steps.check.outputs.skip == 'false'
+        run: |
+          cat > /tmp/body.md <<'EOF'
+          ## Task
+          Build a child page for **GH Copilot in Web UI**.
+
+          - Title: **GH Copilot in Web UI**
+          - File name: `gh-copilot-web-ui.html`
+          - The page should follow the same structure and style as the home page (`index.html`).
+          - Include links to:
+            - https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-cloud-agent
+            - https://docs.github.com/en/copilot/concepts/agents/code-review
+
+          ## Assigned to
+          Cloud Agent on Github.com
+
+          ## Completion
+          Once the page is built:
+          1. Commit the changes
+          2. Pull and rebase from remote: `git pull --rebase origin main`
+          3. Push to remote: `git push origin main`
+          4. Close this issue from the GitHub UI or with `gh issue close <this-issue-number>`
+          EOF
+          sed -i 's/^          //' /tmp/body.md
+          gh issue create --repo "$REPO" --label "coding-agent" --title "GH Copilot in Web UI Page" --body-file /tmp/body.md
+
+      - name: Issue 4 — GH Copilot in VS Code Page
+        if: steps.check.outputs.skip == 'false'
+        run: |
+          cat > /tmp/body.md <<'EOF'
+          ## Task
+          Build a child page for **GH Copilot in VS Code**.
+
+          - Title: **GH Copilot in VS Code**
+          - File name: `gh-copilot-vscode.html`
+          - The page should follow the same structure and style as the home page (`index.html`).
+          - Use https://code.visualstudio.com/docs/agents/concepts/overview for content.
+
+          ## Assigned to
+          Copilot Agent Mode (IDE)
+
+          ## Completion
+          Once the page is built:
+          1. Commit the changes
+          2. Pull and rebase from remote: `git pull --rebase origin main`
+          3. Push to remote: `git push origin main`
+          4. Close this issue from the GitHub UI or with `gh issue close <this-issue-number>`
+          EOF
+          sed -i 's/^          //' /tmp/body.md
+          gh issue create --repo "$REPO" --label "agent-mode" --title "GH Copilot in VS Code Page" --body-file /tmp/body.md
+
+      - name: Issue 5 — GH Copilot CLI Page
+        if: steps.check.outputs.skip == 'false'
+        run: |
+          cat > /tmp/body.md <<'EOF'
+          ## Task
+          Build a child page for **GH Copilot CLI**.
+
+          - Title: **GH Copilot CLI**
+          - File name: `gh-copilot-cli.html`
+          - The page should follow the same structure and style as the home page (`index.html`).
+          - Use https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/overview for content.
+
+          ## Assigned to
+          GitHub Copilot CLI
+
+          ## Completion
+          Once the page is built:
+          1. Commit the changes
+          2. Pull and rebase from remote: `git pull --rebase origin main`
+          3. Push to remote: `git push origin main`
+          4. Close this issue from the GitHub UI or with `gh issue close <this-issue-number>`
+          EOF
+          sed -i 's/^          //' /tmp/body.md
+          gh issue create --repo "$REPO" --label "copilot-cli" --title "GH Copilot CLI Page" --body-file /tmp/body.md
+
+      - name: Issue 6 — GH Copilot SDK Page
+        if: steps.check.outputs.skip == 'false'
+        run: |
+          cat > /tmp/body.md <<'EOF'
+          ## Task
+          Build a child page for **GH Copilot SDK**.
+
+          - Title: **GH Copilot SDK**
+          - File name: `gh-copilot-sdk.html`
+          - The page should follow the same structure and style as the home page (`index.html`).
+          - Use https://github.com/github/copilot-sdk?utm_source=blog-cli-sdk-repo-cta&utm_medium=blog&utm_campaign=cli-sdk-jan-2026 for content.
+
+          ## Assigned to
+          GitHub Copilot CLI
+
+          ## Completion
+          Once the page is built:
+          1. Commit the changes
+          2. Pull and rebase from remote: `git pull --rebase origin main`
+          3. Push to remote: `git push origin main`
+          4. Close this issue from the GitHub UI or with `gh issue close <this-issue-number>`
+          EOF
+          sed -i 's/^          //' /tmp/body.md
+          gh issue create --repo "$REPO" --label "copilot-cli" --title "GH Copilot SDK Page" --body-file /tmp/body.md
+
+      - name: Issue 7 — GH Copilot App Page
+        if: steps.check.outputs.skip == 'false'
+        run: |
+          cat > /tmp/body.md <<'EOF'
+          ## Task
+          Build a child page for **GH Copilot App**.
+
+          - Title: **GH Copilot App**
+          - File name: `gh-copilot-app.html`
+          - The page should follow the same structure and style as the home page (`index.html`).
+          - Use https://github.com/github/app for content.
+
+          ## Assigned to
+          GitHub Copilot CLI
+
+          ## Completion
+          Once the page is built:
+          1. Commit the changes
+          2. Pull and rebase from remote: `git pull --rebase origin main`
+          3. Push to remote: `git push origin main`
+          4. Close this issue from the GitHub UI or with `gh issue close <this-issue-number>`
+          EOF
+          sed -i 's/^          //' /tmp/body.md
+          gh issue create --repo "$REPO" --label "copilot-cli" --title "GH Copilot App Page" --body-file /tmp/body.md
+
+      - name: Issue 8 — Azure Deployment
+        if: steps.check.outputs.skip == 'false'
+        run: |
+          cat > /tmp/body.md <<'EOF'
+          ## Task
+          Deploy the full site to Azure Container Apps and verify it is live.
+
+          ## Pre-flight requirements
+          1. **Azure Container Apps Setup** (Issue 1) must be completed — environment created, all deployment secrets added to the repository.
+          2. All page issues (Issues 2–7) should be closed — Home Page, Web UI, VS Code, CLI, SDK, and App pages are committed and pushed to `main`.
+
+          ## Steps
+
+          ### 1. Verify pre-flight
+          ```bash
+          gh issue list --state open --json number,title,labels \
+            --jq '.[] | select(any(.labels[]; .name == "copilot-cli" or .name == "coding-agent" or .name == "agent-mode")) | "#\(.number) \(.title)"'
+          ```
+          If any page issues (2–7) are still open, wait or resolve them first.
+
+          ### 2. Ensure latest code is on main
+          ```bash
+          git pull --rebase origin main
+          ```
+
+          ### 3. Trigger the deployment workflow
+          ```bash
+          gh workflow run "Azure Container Apps CI/CD"
+          ```
+
+          ### 4. Wait for the workflow to complete
+          ```bash
+          sleep 10
+          gh run list --workflow="Azure Container Apps CI/CD" --limit 1 --json status,conclusion,databaseId
+          ```
+          If status is `in_progress`, wait and re-check. If conclusion is `failure`, inspect logs:
+          ```bash
+          gh run view <run-id> --log-failed
+          ```
+
+          ### 5. Retrieve and verify the live URL
+          ```bash
+          gh run view <run-id> --log | grep "Live URL"
+          ```
+          Then open the URL and confirm the home page and all navigation links work.
+
+          ## Common failure causes
+          - **Missing secrets**: Verify all required secrets are set in repo settings (`AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_SUBSCRIPTION_ID`, `AZURE_CLIENT_SECRET`, `ACR_LOGIN_SERVER`, `ACR_USERNAME`, `ACR_PASSWORD`, `AZURE_RESOURCE_GROUP`, `AZURE_CONTAINERAPP_NAME`, `AZURE_CONTAINERAPPS_ENVIRONMENT`)
+          - **ACR login failure**: Ensure admin access is enabled on the container registry
+          - **Container App not found**: On first deploy, the workflow creates the app; on subsequent deploys, it updates it
+
+          ## Assigned to
+          GitHub Copilot CLI
+
+          ## Completion
+          Once deployment is verified and the live site is confirmed working, close this issue:
+          ```bash
+          gh issue close <this-issue-number>
+          ```
+          EOF
+          sed -i 's/^          //' /tmp/body.md
+          gh issue create --repo "$REPO" --label "copilot-cli" --title "Azure Deployment" --body-file /tmp/body.md
+
+      - name: Issue 9 — Azure Infra Review
+        if: steps.check.outputs.skip == 'false'
+        run: |
+          cat > /tmp/body.md <<'EOF'
+          ## Task
+          Run an Azure Container Apps infrastructure review using the custom agent `aca-infra-auditor.agent`.
+
+          - Title: **Azure Infra Review**
+          - Review from an Azure Well-Architected perspective and suggest short, practical improvements for demo usage.
+          - Keep findings concise and actionable.
+          - Reference guidance: https://github.com/MicrosoftDocs/well-architected/blob/main/well-architected/service-guides/azure-container-apps.md
+
+          ## Pre-flight requirement
+          The **Azure Deployment** issue must be completed first.
+
+          ## Assigned to
+          Custom agent `aca-infra-auditor.agent`
+
+          ## Completion
+          1. Save the full audit report to `AzureInfraReview.md` in the repository root (this file is in `.gitignore` — it is for local reference only).
+          2. Document recommended improvements and close this issue.
+          EOF
+          sed -i 's/^          //' /tmp/body.md
+          gh issue create --repo "$REPO" --label "aca-infra-auditor" --title "Azure Infra Review" --body-file /tmp/body.md
+
+      - name: Issue 10 — Clean Up Azure Resources
+        if: steps.check.outputs.skip == 'false'
+        run: |
+          cat > /tmp/body.md <<'EOF'
+          ## Task
+          After the demo is complete, delete all Azure resources to avoid unnecessary costs.
+
+          ### Steps
+          1. Go to the [Azure Portal](https://portal.azure.com)
+          2. Navigate to the **Resource Group** created for this demo
+          3. Click **Delete resource group** and confirm
+          4. Verify the Container App, Container Apps environment, Container Registry, and any associated resources are fully removed
+
+          > ⚠️ Only do this after the demo is fully complete and you no longer need the live URL.
+          EOF
+          sed -i 's/^          //' /tmp/body.md
+          gh issue create --repo "$REPO" --label "post-demo" --title "Clean Up Azure Resources" --body-file /tmp/body.md

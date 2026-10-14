@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GH Copilot in Web UI</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, sans-serif;
+      background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+      color: #c9d1d9;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+    .container {
+      width: min(860px, 100%);
+      background: #11161d;
+      border: 1px solid #30363d;
+      border-radius: 14px;
+      padding: 2rem;
+    }
+    h1 {
+      color: #58a6ff;
+      margin-bottom: 0.75rem;
+      font-size: 2rem;
+    }
+    p {
+      color: #8b949e;
+      line-height: 1.6;
+      margin-bottom: 1.25rem;
+    }
+    .card {
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      background: #21262d;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .card h2 {
+      font-size: 1.05rem;
+      margin-bottom: 0.5rem;
+      color: #c9d1d9;
+    }
+    a.link {
+      color: #58a6ff;
+      text-decoration: none;
+      font-weight: 600;
+      word-break: break-word;
+    }
+    a.link:hover,
+    a.link:focus {
+      text-decoration: underline;
+      outline: none;
+    }
+    .home-link {
+      display: inline-block;
+      margin-top: 0.25rem;
+      background: #21262d;
+      color: #58a6ff;
+      text-decoration: none;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 0.7rem 1rem;
+      font-weight: 600;
+    }
+    .home-link:hover,
+    .home-link:focus {
+      background: #30363d;
+      border-color: #58a6ff;
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>GH Copilot in Web UI</h1>
+    <p>Review Copilot cloud-agent workflows and code-review capabilities available in GitHub web experiences.</p>
+
+    <section class="card" aria-label="Official cloud agent reference">
+      <h2>Cloud agent</h2>
+      <a class="link" href="https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-cloud-agent" target="_blank" rel="noopener noreferrer">About GitHub Copilot cloud agent</a>
+    </section>
+
+    <section class="card" aria-label="Official code review reference">
+      <h2>Code review</h2>
+      <a class="link" href="https://docs.github.com/en/copilot/concepts/agents/code-review" target="_blank" rel="noopener noreferrer">About GitHub Copilot code review</a>
+    </section>
+
+    <a class="home-link" href="index.html">Back to Home</a>
+  </main>
+</body>
+</html>
